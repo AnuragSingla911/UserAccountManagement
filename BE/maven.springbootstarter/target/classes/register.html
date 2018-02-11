@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {font-family: Arial;}
+
+/* Style the tab */
+.tab {
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+}
+
+/* Style the buttons inside the tab */
+.tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+    font-size: 17px;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+    background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+    background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+    display: none;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-top: none;
+}
+</style>
+</head>
+<body>
+
+<p>Click on the buttons inside the tabbed menu:</p>
+
+<div class="tab">
+  <button class="tablinks" onclick="openCity(event, 'Admin')">Admin</button>
+  <button class="tablinks" onclick="openCity(event, 'Register')">Register User</button>
+</div>
+
+<div id="Admin" class="tabcontent">
+   <pre id="jsonList">JsonList</pre>
+</div>
+
+<div id="Register" class="tabcontent">
+
+ UserId : <input type="text" name="userID" class="email"><br><br><br>
+ Password : <input type="text" name="password" class="email"><br><br><br>
+ Full Name : <input type="text" name="fullName" class="email"><br><br><br>
+  <button  onclick="register()">Click to Register</button>
+
+
+</div>
+
+
+
+<script>
+function createJSON() {
+    jsonObj = {};
+    $("input[class=email]").each(function() {
+
+        var id = $(this).attr("name");
+        var email = $(this).val();
+
+        jsonObj [id] = email;
+
+    });
+
+    console.log(jsonObj);
+}
+function register() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+    alert("success");
+    }
+  };
+  xhttp.open("POST", "http://localhost:8080/register", true);
+  xhttp.setRequestHeader("Content-type", "application/json");
+  var jsonObj = {};
+    $("input[class=email]").each(function() {
+
+        var id = $(this).attr("name");
+        var email = $(this).val();
+
+        jsonObj [$(id)] = email;
+
+    });
+
+var myJSON = JSON.stringify(jsonObj);
+  xhttp.send(myJSON);
+}
+
+
+function loadXMLDoc() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+  
+ document.getElementById("jsonList").innerHTML =
+      xhttp.responseText;
+   } 
+  };
+  xhttp.open("GET", "http://localhost:8080/admin", true);
+  xhttp.send();
+}
+
+function openCity(evt, cityName) {
+
+if(cityName == "Admin"){
+loadXMLDoc();
+}
+    var i, tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+    document.getElementById(cityName).style.display = "block";
+    evt.currentTarget.className += " active";
+    
+ 
+    
+}
+</script>
+     
+</body>
+</html> 
