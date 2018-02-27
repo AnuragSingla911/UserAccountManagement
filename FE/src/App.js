@@ -1,15 +1,16 @@
 import React, { Component } from 'react';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import Login from './login';
 
 import 'react-tabs/style/react-tabs.css';
 
 class App extends Component {
 
-constructor(){
-super();
+constructor(props){
+super(props);
 this.state ={
   dataSource : [],
-isLoading : true,
+isLoading : 0,
 username : '',
 fullname : '',
 password : ''
@@ -27,22 +28,42 @@ this.getAccounts();
 onSelectTab(){
 
 this.getAccounts();
-
 }
+
 
 
 
 getAccounts() {
 
-   return fetch('http://localhost:8080/admin'
+console.log("request")
+   return fetch('http://localhost:8080/admin',{
+    credentials: 'include',
+
+   }
    )
-    .then((Response) => Response.json())
-    .then((responseJson) => {
-      console.log("response");
-       this.setState({
-             isLoading: false,
-             dataSource: responseJson,
+    .then((Response) => {
+      console.log(Response.status);
+      if(Response.status === 200){
+         return Response.json();
+      }else{
+        return null;
+      }
+      
+    }).then((responseJson) => {
+      if(responseJson != null){
+         this.setState({
+             isLoading: 1,
+             dataSource:responseJson,
            });
+      }else{
+        this.setState({
+          isLoading : 2,
+        })
+      }
+    })
+    .catch((e) => {
+console.log("error");
+       
     })
     
 
@@ -69,6 +90,8 @@ console.log(this.state.password);
  return fetch('http://localhost:8080/register', {
    method: 'post',
    headers: {'Content-Type':'application/json'},
+       credentials: 'include',
+
    body: JSON.stringify({
     "userID" : this.state.username,
     "password": this.state.password,
@@ -88,13 +111,14 @@ console.log(this.state.password);
 
   render() {
           console.log('start'+ this.state.isLoading);
-
-	if(this.state.isLoading === false){
+ if(this.state.isLoading === 2){
+    return ( <Login updateState ={this.onSelectTab} />);
+  }else
+	if(this.state.isLoading === 1){
     return (
         <Tabs forceRenderTabPanel defaultIndex={0}>
               <TabList>
                        <Tab>Admin</Tab>
-                       <Tab>User</Tab>
               </TabList>
 
             <TabPanel>
@@ -107,26 +131,7 @@ console.log(this.state.password);
                   </div>
 
            </TabPanel>
-            <TabPanel>
-                    <form onSubmit={this.register}>
-  <label>
-    UserName:
-    <input type="text" name="username" onChange={this.handleChangeUserName}/>
-  </label>
-<div></div>
-   <label>
-    FullName:
-    <input type="text" name="name" onChange={this.handleChangeFullName}/>
-  </label>
-<div></div>
- <label>
-    Password:
-    <input type="text" name="password" onChange={this.handleChangePassword}/>
-  </label>
-  <div></div>
-  <input type="submit" value="Submit" />
-</form>
-             </TabPanel>
+           
           </Tabs>
     );
   }
