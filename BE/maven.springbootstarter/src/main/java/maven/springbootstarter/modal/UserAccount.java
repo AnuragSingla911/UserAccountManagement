@@ -1,17 +1,25 @@
 package maven.springbootstarter.modal;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
 @Entity
 public class UserAccount {
-	
+
+	public static final PasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
+
+
 	@Id
 	private String userID;
 	
 	private String password;
 	
 	private String fullName;
+
+	private String role;
 
 	
 	public UserAccount() {
@@ -46,5 +54,13 @@ public class UserAccount {
 
 	public void setFullName(String fullName) {
 		this.fullName = fullName;
+	}
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
 	}
 }

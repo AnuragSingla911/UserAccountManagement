@@ -23,7 +23,7 @@ public class UserAccountManager {
 	}
 	
 	public UserAccount getUserAccount(String userId) {
-		return mDbManager.findOne(userId);
+		return mDbManager.findById(userId).get();
 	}
 	
 	public void addAccount(UserAccount account) {
